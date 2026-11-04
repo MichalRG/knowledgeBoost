@@ -1,0 +1,30 @@
+{
+  "category": "Databases",
+  "title": "Redis",
+  "questions": [
+    {
+      "id": "redis-event-loop",
+      "question": "Why does Redis use an event loop?",
+      "answer": "One thread multiplexes many client sockets, so commands run one at a time without locks.",
+      "explanation": "Redis keeps data in memory, so a command is usually faster than the network round trip: the time goes into waiting on sockets, not into the CPU. An event loop built on epoll or kqueue lets one thread watch thousands of connections and run each ready command to completion. Because commands never run in parallel, each one is atomic and the data structures need no locks. The price is that one slow command, such as KEYS on a large database, blocks every other client.",
+      "code": [
+        "while (!stop) {",
+        "    events = epoll_wait(fd, ...);",
+        "    for (e in events) handle(e);",
+        "}"
+      ]
+    },
+    {
+      "id": "redis-persistence",
+      "question": "What are the two ways Redis can persist data to disk?",
+      "answer": "RDB snapshots taken at intervals, and the AOF, an append-only log of every write.",
+      "explanation": "RDB forks the process and writes a compact point-in-time file: restarts are fast, but the writes since the last snapshot are lost on a crash. AOF appends every write command and replays them on restart; with appendfsync everysec you lose at most about one second of writes. Many setups enable both."
+    },
+    {
+      "id": "redis-expiry",
+      "question": "How does Redis remove keys whose TTL has run out?",
+      "answer": "Lazily, when an expired key is accessed, and actively, with a background cycle that deletes expired keys in small steps.",
+      "explanation": "Checking every key on every tick would be too slow. When a client touches an expired key, Redis deletes it before answering, so expired data is never returned. A periodic background cycle also looks through keys that have a TTL and deletes the expired ones a few at a time, so memory is freed even for keys nobody reads again."
+    }
+  ]
+}

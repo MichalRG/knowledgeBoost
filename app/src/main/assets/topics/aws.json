@@ -1,0 +1,24 @@
+{
+  "category": "Cloud",
+  "title": "AWS",
+  "questions": [
+    {
+      "id": "aws-s3-consistency",
+      "question": "What consistency does Amazon S3 give you when you read an object right after writing it?",
+      "answer": "Strong read-after-write consistency for every PUT and DELETE, at no extra cost.",
+      "explanation": "Since December 2020, once a write, overwrite or delete succeeds, every following GET returns the new version and every LIST includes the change. Before that, overwrites and deletes were only eventually consistent, which is why older articles warn about stale reads."
+    },
+    {
+      "id": "aws-iam-role-vs-user",
+      "question": "What is the difference between an IAM user and an IAM role?",
+      "answer": "A user is one identity with long-term credentials; a role has no credentials of its own and is assumed to get temporary ones.",
+      "explanation": "Assuming a role goes through AWS STS, which returns short-lived access keys and a session token. EC2 instances, Lambda functions and people from other accounts or identity providers use roles, so no long-lived secret has to be stored with them. Prefer roles to users with access keys wherever you can."
+    },
+    {
+      "id": "aws-sqs-visibility-timeout",
+      "question": "What does the SQS visibility timeout do?",
+      "answer": "It hides a received message from other consumers for a while; if the message is not deleted in time, it becomes visible again.",
+      "explanation": "A received message stays in the queue but is invisible for the visibility timeout (30 seconds by default). The consumer deletes it after processing. If the consumer crashes or is too slow, the message reappears and another consumer receives it, so handlers must be idempotent."
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "category": "Programming",
+  "title": "Kotlin",
+  "questions": [
+    {
+      "id": "kotlin-val-vs-var",
+      "question": "What is the difference between val and var?",
+      "answer": "A val is a read-only reference assigned once; a var can be reassigned.",
+      "explanation": "val makes the reference read-only, not the object behind it: a val holding a MutableList can still have items added. Prefer val by default; it makes code easier to follow and lets the compiler smart-cast more often."
+    },
+    {
+      "id": "kotlin-data-class",
+      "question": "What does the compiler generate for a data class?",
+      "answer": "equals(), hashCode(), toString(), copy() and componentN() functions, all from the properties in the primary constructor.",
+      "explanation": "Only properties declared in the primary constructor take part, so a property declared in the class body is ignored by equals() and toString(). copy() returns a changed copy and componentN() makes destructuring work.",
+      "code": [
+        "data class User(val name: String, val age: Int)",
+        "",
+        "val older = User(\"Ada\", 36).copy(age = 37)",
+        "val (name, age) = older"
+      ]
+    },
+    {
+      "id": "kotlin-lateinit-vs-lazy",
+      "question": "When do you use lateinit instead of by lazy?",
+      "answer": "lateinit for a var that something else sets later, such as a framework or a test; by lazy for a val computed once on first access.",
+      "explanation": "lateinit works only on non-null var properties of non-primitive types, and reading one before it is assigned throws UninitializedPropertyAccessException. by lazy takes an initializer, runs it on first access and keeps the result; by default it is synchronized, so it is safe to read from several threads."
+    }
+  ]
+}

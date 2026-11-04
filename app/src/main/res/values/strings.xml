@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Knowledge Boost</string>
+
+    <string name="home_missed">Missed (%1$d)</string>
+    <string name="home_removed">Removed (%1$d)</string>
+
+    <string name="category_available">Available now: %1$d</string>
+    <string name="category_hidden">Hidden as known: %1$d</string>
+    <string name="category_missed">On the Missed list: %1$d</string>
+
+    <string name="topic_empty">No questions here right now</string>
+    <string name="topic_next_return">The next question comes back on %1$s</string>
+
+    <string name="card_position">%1$d / %2$d</string>
+    <string name="card_show_answer">Show answer</string>
+    <string name="card_knew_it">Knew it</string>
+    <string name="card_missed">Missed</string>
+    <string name="card_remove">Remove</string>
+    <string name="card_previous">Previous</string>
+    <string name="card_next">Next</string>
+    <plurals name="knew_it_hides_days">
+        <item quantity="one">Knew it hides this for %1$d day</item>
+        <item quantity="other">Knew it hides this for %1$d days</item>
+    </plurals>
+
+    <string name="question_where">%1$s · %2$s</string>
+
+    <string name="missed_title">Missed</string>
+    <string name="missed_intro">Questions you marked Missed. They stay here until you clear them.</string>
+    <string name="missed_empty">Your Missed list is empty</string>
+    <string name="missed_available">Available in its topic</string>
+    <string name="missed_hidden_until">Hidden in its topic until %1$s</string>
+    <string name="missed_clear">Clear</string>
+    <string name="missed_clear_from_list">Clear from Missed</string>
+
+    <string name="removed_title">Removed</string>
+    <string name="removed_intro">Removed questions are hidden everywhere until you restore them.</string>
+    <string name="removed_empty">No removed questions</string>
+    <string name="removed_restore">Restore</string>
+</resources>
