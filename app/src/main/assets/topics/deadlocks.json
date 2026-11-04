@@ -1,0 +1,211 @@
+{
+  "category": "Programming",
+  "title": "Deadlocks",
+  "questions": [
+    {
+      "id": "deadlocks-definition",
+      "question": "What is a deadlock in concurrent programming?",
+      "answer": "A deadlock occurs when a group of threads or processes is permanently blocked waiting for resources or actions that depend on one another.",
+      "explanation": "For example, thread T1 holds lock A and waits for lock B, while thread T2 holds lock B and waits for lock A. Neither thread can proceed because each needs a resource held by the other."
+    },
+    {
+      "id": "deadlocks-vs-starvation",
+      "question": "What is the difference between deadlock and starvation?",
+      "answer": "Deadlock occurs when a group of participants cannot make progress because of circular dependencies. Starvation occurs when one participant is repeatedly denied a resource while others continue making progress.",
+      "explanation": "In starvation, the system continues performing other work, but one participant may wait indefinitely. In deadlock, the participants involved in the dependency cycle cannot proceed."
+    },
+    {
+      "id": "deadlocks-vs-livelock",
+      "question": "How does a livelock differ from a deadlock?",
+      "answer": "In a deadlock, participants remain blocked. In a livelock, participants continue changing state or reacting to one another without accomplishing useful work.",
+      "explanation": "A livelocked system is active but makes no useful progress. A deadlocked group cannot proceed because its participants are waiting on unresolved dependencies."
+    },
+    {
+      "id": "deadlocks-coffman-conditions",
+      "question": "What are the four Coffman conditions necessary for a deadlock in the classic resource-allocation model?",
+      "answer": "Mutual exclusion, hold and wait, no preemption, and circular wait.",
+      "explanation": "All four conditions must exist simultaneously for a deadlock to occur in the classic model. Deadlock prevention works by ensuring that at least one of these conditions cannot hold."
+    },
+    {
+      "id": "deadlocks-mutual-exclusion",
+      "question": "What does mutual exclusion mean in the context of deadlocks?",
+      "answer": "Mutual exclusion means that at least one resource can be used by only one thread or process at a time.",
+      "explanation": "For example, a mutex allows only one thread to own it at a time. Other threads requesting the same mutex must wait until it is released."
+    },
+    {
+      "id": "deadlocks-hold-and-wait",
+      "question": "What is the hold-and-wait condition required for deadlock?",
+      "answer": "A thread or process holds at least one resource while waiting to acquire another resource.",
+      "explanation": "For example, a thread acquires lock A and then waits for lock B without releasing A. This can contribute to deadlock when another thread needs A to make progress."
+    },
+    {
+      "id": "deadlocks-no-preemption",
+      "question": "What does the no-preemption condition mean in deadlock theory?",
+      "answer": "A resource cannot be forcibly taken away from its current holder and must be released voluntarily.",
+      "explanation": "If a thread owns a lock, another thread generally cannot simply take ownership of it. This allows circular resource dependencies to persist."
+    },
+    {
+      "id": "deadlocks-circular-wait",
+      "question": "What is circular wait in deadlock theory?",
+      "answer": "Circular wait occurs when participants form a cycle in which each waits for a resource held by the next participant.",
+      "explanation": "For example, T1 waits for T2, T2 waits for T3, and T3 waits for T1. The cycle prevents every participant from making progress."
+    },
+    {
+      "id": "deadlocks-resource-allocation-graph",
+      "question": "How can a resource-allocation graph help identify a deadlock?",
+      "answer": "It represents processes, resources, allocations, and requests, allowing circular waiting dependencies to be identified.",
+      "explanation": "When each resource type has exactly one instance, a cycle implies deadlock. When resource types have multiple instances, a cycle alone does not necessarily prove deadlock."
+    },
+    {
+      "id": "deadlocks-four-management-strategies",
+      "question": "What are the four main strategies for handling deadlocks?",
+      "answer": "Prevention, avoidance, detection, and recovery.",
+      "explanation": "Prevention eliminates a necessary condition. Avoidance grants requests only when the resulting state remains safe. Detection identifies existing deadlocks, while recovery resolves them."
+    },
+    {
+      "id": "deadlocks-prevention",
+      "question": "How does deadlock prevention work?",
+      "answer": "Deadlock prevention designs resource access so that at least one of the four Coffman conditions cannot occur.",
+      "explanation": "For example, requiring every thread to acquire locks in a consistent global order eliminates circular waiting caused by inconsistent lock acquisition."
+    },
+    {
+      "id": "deadlocks-lock-ordering",
+      "question": "How does global lock ordering prevent deadlocks?",
+      "answer": "It requires every thread to acquire resources in the same predefined order, preventing circular waiting dependencies.",
+      "explanation": "If every thread must acquire lock A before lock B, no thread can hold B while waiting to acquire A. The approach works only when the ordering rule is applied consistently.",
+      "code": [
+        "with lock_a:",
+        "    with lock_b:",
+        "        do_work()"
+      ]
+    },
+    {
+      "id": "deadlocks-break-hold-and-wait",
+      "question": "How can a system prevent deadlocks by eliminating the hold-and-wait condition?",
+      "answer": "Require participants to request all necessary resources together or release currently held resources before requesting additional ones.",
+      "explanation": "This prevents a participant from holding some resources while waiting for others. However, requesting everything upfront can reduce resource utilization and introduce additional waiting."
+    },
+    {
+      "id": "deadlocks-break-mutual-exclusion",
+      "question": "How can making resources shareable help prevent deadlocks?",
+      "answer": "Making a resource safely shareable eliminates the mutual-exclusion requirement for that resource.",
+      "explanation": "For example, immutable data can often be accessed concurrently without an exclusive lock. This strategy does not work for resources that inherently require exclusive ownership."
+    },
+    {
+      "id": "deadlocks-break-no-preemption",
+      "question": "How can resource preemption help prevent deadlocks?",
+      "answer": "A system can allow resources to be reclaimed or operations to be rolled back instead of requiring the current holder to release resources voluntarily.",
+      "explanation": "This breaks the no-preemption condition. However, reclaiming a resource is safe only when the operation or resource supports interruption or rollback."
+    },
+    {
+      "id": "deadlocks-avoidance",
+      "question": "How does deadlock avoidance differ from deadlock prevention?",
+      "answer": "Prevention makes at least one necessary deadlock condition impossible. Avoidance evaluates resource requests and grants them only when the resulting state remains safe.",
+      "explanation": "Avoidance requires information about processes' maximum resource requirements. It allows potentially risky allocation patterns but rejects requests that would create unsafe states."
+    },
+    {
+      "id": "deadlocks-safe-state",
+      "question": "What is a safe state in deadlock avoidance?",
+      "answer": "A safe state is a resource-allocation state with at least one safe sequence in which every process can obtain its remaining resources, complete, and release its resources.",
+      "explanation": "A safe sequence guarantees that processes can finish in some order, assuming they request no more than their declared maximum requirements."
+    },
+    {
+      "id": "deadlocks-unsafe-state",
+      "question": "Does an unsafe resource-allocation state necessarily mean that a deadlock already exists?",
+      "answer": "No. An unsafe state has no guaranteed safe completion sequence, but the processes may not yet be deadlocked.",
+      "explanation": "An unsafe state indicates that future resource requests could lead to deadlock. A deadlock exists only when participants are actually blocked by dependencies that prevent progress."
+    },
+    {
+      "id": "deadlocks-safe-sequence-example",
+      "question": "Two processes each hold one resource and may need at most two. With three identical resources total, why is the state safe?",
+      "answer": "One resource remains available, allowing either process to obtain its remaining resource, finish, and release its resources.",
+      "explanation": "If P1 receives the available resource, it holds two and can finish. After releasing them, P2 can obtain what it needs. Both P1 → P2 and P2 → P1 are safe sequences."
+    },
+    {
+      "id": "deadlocks-unsafe-allocation-example",
+      "question": "Why is a system unsafe when three processes each hold one of three identical resources and each may still need two more?",
+      "answer": "No resources remain available, and no process has enough resources to guarantee completion.",
+      "explanation": "There is no safe sequence. If all three processes request their remaining resources and wait, the system is deadlocked. If they have not made those requests, the state is unsafe but not necessarily deadlocked."
+    },
+    {
+      "id": "deadlocks-bankers-algorithm",
+      "question": "What does Banker's Algorithm check before granting a resource request?",
+      "answer": "It checks whether granting the request would leave the system in a safe state with at least one safe completion sequence.",
+      "explanation": "Having enough resources available for the immediate request is not sufficient. The algorithm considers current allocations and processes' maximum resource needs to determine whether all processes could eventually finish."
+    },
+    {
+      "id": "deadlocks-detection",
+      "question": "How does deadlock detection differ from deadlock avoidance?",
+      "answer": "Detection allows deadlocks to occur and then searches for them. Avoidance prevents resource allocations that would lead to unsafe states.",
+      "explanation": "Deadlock detection can analyze waiting dependencies using structures such as wait-for graphs. Unlike avoidance, it does not necessarily reject a resource request before the deadlock happens."
+    },
+    {
+      "id": "deadlocks-recovery",
+      "question": "What methods can a system use to recover from a detected deadlock?",
+      "answer": "It can abort a participant, roll back an operation, or reclaim resources when doing so is safe.",
+      "explanation": "Recovery must break the waiting dependency. The available method depends on whether the system can safely terminate work, restore an earlier state, or reclaim resources."
+    },
+    {
+      "id": "deadlocks-thread-pool-deadlock",
+      "question": "How can a bounded ThreadPoolExecutor become deadlocked when workers submit additional tasks?",
+      "answer": "Workers can block while waiting for tasks submitted to the same executor, leaving no available workers to execute those tasks.",
+      "explanation": "If every worker is occupied waiting for child tasks, those child tasks cannot start. This is commonly called a thread-starvation deadlock.",
+      "code": [
+        "def parent():",
+        "    future = executor.submit(child)",
+        "    return future.result()"
+      ]
+    },
+    {
+      "id": "deadlocks-thread-pool-prevention",
+      "question": "How can thread-starvation deadlocks be avoided when using a bounded executor?",
+      "answer": "Avoid blocking pool workers on tasks that require available workers from the same exhausted pool.",
+      "explanation": "Prefer coordinating task results in the caller, using callbacks or asynchronous composition, or using a separate executor when appropriate.",
+      "code": [
+        "future = executor.submit(parent_work)",
+        "result = future.result()"
+      ]
+    },
+    {
+      "id": "deadlocks-lock-vs-rlock",
+      "question": "What is the difference between threading.Lock and threading.RLock in Python?",
+      "answer": "Lock is not reentrant, while RLock allows the owning thread to acquire the same lock multiple times.",
+      "explanation": "Trying to acquire a regular Lock again while already holding it can cause self-deadlock. RLock tracks recursive acquisitions and requires a matching number of releases."
+    },
+    {
+      "id": "deadlocks-self-deadlock",
+      "question": "How can a single Python thread deadlock itself using threading.Lock?",
+      "answer": "A thread can block indefinitely by trying to acquire a non-reentrant Lock that it already holds.",
+      "explanation": "The second acquisition waits for the lock to become available, but the thread cannot reach the statement that releases its first acquisition.",
+      "code": [
+        "from threading import Lock",
+        "",
+        "lock = Lock()",
+        "",
+        "with lock:",
+        "    lock.acquire()"
+      ]
+    },
+    {
+      "id": "deadlocks-rlock-reentrancy",
+      "question": "How does threading.RLock prevent a thread from deadlocking when it needs to acquire the same lock repeatedly?",
+      "answer": "RLock allows the thread that already owns the lock to acquire it again, tracking each acquisition.",
+      "explanation": "Each successful acquisition must be matched by a release. Nested context managers handle the matching releases automatically.",
+      "code": [
+        "from threading import RLock",
+        "",
+        "lock = RLock()",
+        "",
+        "with lock:",
+        "    with lock:",
+        "        do_work()"
+      ]
+    },
+    {
+      "id": "deadlocks-rlock-limitations",
+      "question": "Why does using RLock not eliminate every possible deadlock?",
+      "answer": "RLock prevents a specific self-deadlock pattern but does not prevent circular waiting between different threads or resources.",
+      "explanation": "For example, thread T1 can hold lock A while waiting for lock B, while T2 holds B and waits for A. Reentrant locks do not eliminate this dependency cycle."
+    }
+  ]
+}

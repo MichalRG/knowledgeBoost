@@ -57,15 +57,29 @@ class BundledTopicsTest {
     }
 
     @Test
-    fun `the shipped sample set has two categories, the Redis event loop question and a code snippet`() {
+    fun `the bundled library contains the supplied programming topics instead of the samples`() {
         val topics = bundledTopics()
-        val questions = topics.flatMap { it.questions }
 
-        val perCategory = topics.groupBy { it.category }.mapValues { (_, inCategory) -> inCategory.sumOf { it.questions.size } }
-        assertTrue("expected at least 2 categories, found ${perCategory.keys}", perCategory.size >= 2)
-        assertEquals("categories with fewer than 3 questions", emptyList<String>(), perCategory.filterValues { it < 3 }.keys.toList())
+        assertEquals(setOf("Programming"), topics.map { it.category }.toSet())
+        assertEquals(
+            mapOf(
+                "concurrency" to 38,
+                "deadlocks" to 29,
+                "python-gil-concurrency-debugging" to 22,
+            ),
+            topics.associate { it.id to it.questions.size },
+        )
+        assertEquals(
+            listOf("Concurrency", "Deadlocks", "Python GIL and Concurrency Debugging"),
+            topics.map { it.title },
+        )
+    }
 
-        assertEquals("Why does Redis use an event loop?", questions.single { it.id == "redis-event-loop" }.text)
-        assertTrue("no sample question has a code snippet", questions.any { it.code.isNotEmpty() })
+    @Test
+    fun `every supplied topic includes code examples`() {
+        assertEquals(
+            emptyList<String>(),
+            bundledTopics().filter { topic -> topic.questions.none { it.code.isNotEmpty() } }.map { it.id },
+        )
     }
 }

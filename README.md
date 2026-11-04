@@ -16,25 +16,39 @@ More:
 - The **Missed** list shows every missed question with its category and topic, also the ones hidden for now. Go through them with the same card, or **Clear** them from the list; a question leaves the list only when you clear it or remove it
 - Dark mode, fully offline: no account, no network, no notifications, all data stays on the phone and is not copied to a cloud backup or a new phone
 
+## Included topics
+
+Version 1.1 replaces the four demonstration topics with 89 questions from the supplied notes.
+All three topics are in **Programming**:
+
+| Topic | Questions |
+|-------|-----------|
+| Concurrency | 38 |
+| Deadlocks | 29 |
+| Python GIL and Concurrency Debugging | 22 |
+
+The supplied question ids, text, explanations and code examples are unchanged.
+Saved progress for removed demonstration questions stays on the device but does not appear in the app.
+
 ## Adding a topic
 
-Every topic is one JSON file in `app/src/main/assets/topics/`. The file name is the topic's id, for example `redis.json`. The app ships with four sample topics (AWS, Redis, Kotlin and Python); replace them or add your own.
+Every topic is one JSON file in `app/src/main/assets/topics/`. The file name is the topic's id, for example `concurrency.json`. Add another file to include a new topic.
 
 ```json
 {
-  "category": "Databases",
-  "title": "Redis",
+  "category": "Programming",
+  "title": "Concurrency",
   "questions": [
     {
-      "id": "redis-event-loop",
-      "question": "Why does Redis use an event loop?",
-      "answer": "One thread multiplexes many client sockets, so commands run one at a time without locks.",
-      "explanation": "Redis keeps data in memory, so a command is usually faster than the network round trip ...",
+      "id": "concurrency-thread-pool-executor",
+      "question": "How does ThreadPoolExecutor simplify concurrent execution in Python?",
+      "answer": "ThreadPoolExecutor manages a pool of threads and distributes submitted tasks among its workers.",
+      "explanation": "The map() method can apply a function to multiple inputs using worker threads. A context manager handles executor shutdown.",
       "code": [
-        "while (!stop) {",
-        "    events = epoll_wait(fd, ...);",
-        "    for (e in events) handle(e);",
-        "}"
+        "from concurrent.futures import ThreadPoolExecutor",
+        "",
+        "with ThreadPoolExecutor(max_workers=5) as executor:",
+        "    results = list(executor.map(download_site, sites))"
       ]
     }
   ]
@@ -43,7 +57,7 @@ Every topic is one JSON file in `app/src/main/assets/topics/`. The file name is 
 
 - `category`, `title` and `questions` are required. Topics with the same `category` are listed together; categories and topics are sorted by name.
 - Every question needs a non-blank `id`, `question`, `answer` and `explanation`. `code` is optional: one string per line, shown in a monospace font that scrolls sideways. Use `""` for an empty line.
-- The file name and every question `id` are lower-case slugs such as `redis-event-loop`: letters, digits and single hyphens.
+- The file name and every question `id` are lower-case slugs such as `concurrency-thread-pool-executor`: letters, digits and single hyphens.
 - A question `id` is the question's permanent key and must be unique across **all** topic files. Never change it once the app is installed, or its progress is lost.
 - Text can be corrected at any time, and questions can be added or reordered; progress stays.
 - Deleting a question hides it; its progress comes back if the same `id` is added again.

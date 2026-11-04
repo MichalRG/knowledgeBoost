@@ -1,0 +1,189 @@
+{
+  "category": "Programming",
+  "title": "Python GIL and Concurrency Debugging",
+  "questions": [
+    {
+      "id": "python-gil-concurrency-debugging-gil-definition",
+      "question": "What is the Global Interpreter Lock (GIL) in CPython?",
+      "answer": "The GIL is a mutex that controls which thread can execute Python bytecode in the traditional CPython execution model.",
+      "explanation": "A thread must acquire the GIL before executing Python bytecode. This prevents multiple threads from executing Python bytecode simultaneously within the same GIL-protected interpreter."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-reference-counting",
+      "question": "How does reference counting help Python manage memory?",
+      "answer": "Reference counting tracks how many references point to an object. When the reference count reaches zero, the object's memory can be released.",
+      "explanation": "If two variables reference the same list, both contribute to its reference count. Removing a reference decreases the count."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-getrefcount",
+      "question": "What does sys.getrefcount() measure, and why can its result be higher than expected?",
+      "answer": "It returns the reference count of an object, including a temporary reference created when passing the object to the function.",
+      "explanation": "If variables a and b reference the same list, both contribute to its count. Calling sys.getrefcount(a) temporarily adds another reference. Other implementation details may also affect the result.",
+      "code": [
+        "import sys",
+        "",
+        "a = []",
+        "b = a",
+        "print(sys.getrefcount(a))"
+      ]
+    },
+    {
+      "id": "python-gil-concurrency-debugging-reference-count-race",
+      "question": "Why must reference count updates be protected against race conditions?",
+      "answer": "Concurrent updates could corrupt the reference count, causing memory leaks or premature object deallocation.",
+      "explanation": "If multiple threads modify the same reference count without synchronization, updates may be lost or applied incorrectly. An object could remain allocated unnecessarily or be freed while references still exist."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-single-lock-design",
+      "question": "Why was a single interpreter lock used instead of adding separate locks to every Python object?",
+      "answer": "A single lock simplifies synchronization and avoids the overhead of managing many fine-grained locks.",
+      "explanation": "Protecting individual objects would require repeatedly acquiring and releasing locks. The GIL provides a simpler approach, but limits parallel execution of Python bytecode."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-deadlock-limitation",
+      "question": "Does the GIL prevent all deadlocks in Python programs?",
+      "answer": "No. The GIL simplifies interpreter-level synchronization but does not prevent deadlocks involving application-level locks.",
+      "explanation": "Threads or asynchronous tasks can still create circular waiting dependencies. For example, two operations may each wait for a resource held by the other."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-cpu-bound-impact",
+      "question": "How does the traditional CPython GIL affect CPU-bound multithreaded programs?",
+      "answer": "It prevents multiple threads from executing Python bytecode simultaneously, limiting CPU-bound parallelism.",
+      "explanation": "For example, dividing a CPU-intensive image-processing algorithm among Python threads may not improve performance. Thread scheduling overhead can even increase execution time."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-io-bound-impact",
+      "question": "Why does the GIL usually have less impact on I/O-bound multithreaded programs?",
+      "answer": "Threads can release the GIL while waiting for blocking I/O operations, allowing other threads to execute.",
+      "explanation": "When a thread waits for a network response or file operation, another thread can use the interpreter. This allows waiting periods to overlap."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-mixed-workload-starvation",
+      "question": "What GIL scheduling problem historically affected programs combining CPU-bound and I/O-bound threads?",
+      "answer": "CPU-bound threads could repeatedly reacquire the GIL before I/O-bound threads had an opportunity to execute.",
+      "explanation": "This could cause I/O-bound threads to experience starvation or excessive delays even when their I/O operations were ready to continue."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-historical-gil-switching",
+      "question": "How did older versions of CPython decide when a CPU-bound thread should release the GIL?",
+      "answer": "Older CPython versions used an instruction-based switching interval that periodically required threads to release the GIL.",
+      "explanation": "The earlier mechanism used a fixed instruction-count interval, historically 100 instructions by default. A thread could sometimes immediately reacquire the GIL before another thread obtained it."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-gil-fairness-improvement",
+      "question": "How did Python 3.2 improve GIL scheduling fairness?",
+      "answer": "It introduced changes that gave waiting threads a better opportunity to acquire the GIL before the current thread reacquired it.",
+      "explanation": "The improvement addressed the historical problem in which CPU-bound threads could repeatedly reacquire the GIL and delay I/O-bound threads."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-free-threading",
+      "question": "What optional GIL-related capability was introduced in Python 3.13?",
+      "answer": "Python 3.13 introduced an optional free-threaded CPython build that supports running without the GIL.",
+      "explanation": "This allows Python threads to execute bytecode in parallel. It is an optional execution mode rather than a guarantee that every Python 3.13 installation runs without a GIL."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-multiprocessing-bypass",
+      "question": "How does multiprocessing avoid the traditional CPython GIL limitation for CPU-bound workloads?",
+      "answer": "Multiprocessing executes work in separate Python processes, each with its own interpreter and memory space.",
+      "explanation": "Each process has independent interpreter state, allowing CPU-intensive computations to execute simultaneously on different CPU cores."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-multiprocessing-pool",
+      "question": "How can multiprocessing.Pool distribute a CPU-bound calculation between worker processes?",
+      "answer": "Create a process pool and submit separate portions of the calculation to its workers.",
+      "explanation": "Pool.apply_async() submits work without waiting immediately for its completion. Closing and joining the pool allows the program to finish the submitted operations before proceeding.",
+      "code": [
+        "from multiprocessing import Pool",
+        "",
+        "def countdown(n):",
+        "    while n > 0:",
+        "        n -= 1",
+        "",
+        "if __name__ == '__main__':",
+        "    with Pool(processes=2) as pool:",
+        "        first = pool.apply_async(countdown, [25_000_000])",
+        "        second = pool.apply_async(countdown, [25_000_000])",
+        "        first.get()",
+        "        second.get()"
+      ]
+    },
+    {
+      "id": "python-gil-concurrency-debugging-process-overhead",
+      "question": "Why does using two processes not necessarily reduce a CPU-bound program's execution time by exactly half?",
+      "answer": "Creating, managing, and communicating between processes introduces additional overhead.",
+      "explanation": "Although processes can execute in parallel, their startup and management consume resources. The actual performance improvement depends on the workload and available CPU cores."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-interpreter-implementations",
+      "question": "Which alternative Python interpreter implementations are mentioned alongside CPython?",
+      "answer": "Jython, IronPython, and PyPy.",
+      "explanation": "These implementations differ in their internal architectures and execution environments. Their threading and interpreter-lock behavior must be evaluated individually rather than assuming they all behave like CPython."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-faulthandler-purpose",
+      "question": "How can Python's faulthandler module help investigate a program that appears frozen?",
+      "answer": "It can print the current execution stack of running Python threads.",
+      "explanation": "Stack traces reveal where threads are executing or waiting. This helps identify operations involved in suspected deadlocks, although faulthandler does not automatically diagnose the cause.",
+      "code": [
+        "import faulthandler",
+        "import sys",
+        "",
+        "faulthandler.dump_traceback(",
+        "    file=sys.stderr,",
+        "    all_threads=True",
+        ")"
+      ]
+    },
+    {
+      "id": "python-gil-concurrency-debugging-delayed-tracebacks",
+      "question": "How can faulthandler automatically capture thread stack traces after a timeout?",
+      "answer": "Use faulthandler.dump_traceback_later() to schedule traceback dumps after a specified delay.",
+      "explanation": "Setting repeat=True schedules periodic dumps until they are canceled. This is useful for investigating intermittent hangs or deadlocks that are difficult to reproduce.",
+      "code": [
+        "import faulthandler",
+        "",
+        "faulthandler.dump_traceback_later(",
+        "    30,",
+        "    repeat=True",
+        ")"
+      ]
+    },
+    {
+      "id": "python-gil-concurrency-debugging-asyncio-stack-inspection",
+      "question": "How can you inspect the execution state of asyncio tasks when an application appears stuck?",
+      "answer": "Use asyncio.all_tasks() to inspect active tasks and task.print_stack() to display their execution stacks.",
+      "explanation": "A single event-loop thread may manage hundreds of tasks. Inspecting task stacks can reveal which tasks are waiting on queues, locks, futures, or other asynchronous operations.",
+      "code": [
+        "import asyncio",
+        "",
+        "async def dump_tasks():",
+        "    for task in asyncio.all_tasks():",
+        "        print(task)",
+        "        task.print_stack()"
+      ]
+    },
+    {
+      "id": "python-gil-concurrency-debugging-wait-dependencies",
+      "question": "How can a task dependency graph help identify a deadlock?",
+      "answer": "It shows which tasks are waiting for other tasks or resources, making circular dependencies easier to identify.",
+      "explanation": "For example, task A waits for B, B waits for a lock held by C, and C waits for A. The dependency cycle A → B → C → A indicates that none can make progress without an external intervention."
+    },
+    {
+      "id": "python-gil-concurrency-debugging-asyncio-debug-mode",
+      "question": "How do you enable asyncio debug mode when running a Python application?",
+      "answer": "Pass debug=True to asyncio.run().",
+      "explanation": "Debug mode enables additional diagnostic checks and logging that can help investigate asynchronous execution problems.",
+      "code": [
+        "import asyncio",
+        "",
+        "asyncio.run(main(), debug=True)"
+      ]
+    },
+    {
+      "id": "python-gil-concurrency-debugging-thread-vs-asyncio-diagnostics",
+      "question": "How does debugging a thread-based deadlock differ from debugging an asyncio task deadlock?",
+      "answer": "Thread debugging focuses on operating-system threads and their stacks, while asyncio debugging focuses on coroutine tasks and their waiting dependencies.",
+      "explanation": "faulthandler can capture stacks for multiple threads. For asyncio, asyncio.all_tasks() and task.print_stack() provide more useful visibility into individual tasks sharing an event-loop thread."
+    }
+  ]
+}

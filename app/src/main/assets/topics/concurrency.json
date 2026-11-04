@@ -1,0 +1,285 @@
+{
+  "category": "Programming",
+  "title": "Concurrency",
+  "questions": [
+    {
+      "id": "concurrency-definition",
+      "question": "What is concurrency in programming?",
+      "answer": "Concurrency is the ability to manage multiple tasks during overlapping periods of time.",
+      "explanation": "Tasks can make progress by taking turns instead of waiting for each other to finish completely. Concurrency does not necessarily mean simultaneous execution."
+    },
+    {
+      "id": "concurrency-vs-parallelism",
+      "question": "What is the difference between concurrency and parallelism?",
+      "answer": "Concurrency allows multiple tasks to make progress during overlapping periods. Parallelism means multiple tasks execute simultaneously.",
+      "explanation": "A single processor can execute tasks concurrently by switching between them. Multiple CPU cores can execute separate processes in parallel."
+    },
+    {
+      "id": "concurrency-python-models",
+      "question": "What are the three main concurrency approaches described for Python?",
+      "answer": "Threading, asynchronous programming with asyncio, and multiprocessing.",
+      "explanation": "Threading uses operating-system-managed threads, asyncio uses cooperative tasks managed by an event loop, and multiprocessing uses separate processes that can run on multiple CPU cores."
+    },
+    {
+      "id": "concurrency-io-bound-definition",
+      "question": "What makes a program I/O-bound?",
+      "answer": "An I/O-bound program spends significant time waiting for external operations such as network requests or file access.",
+      "explanation": "The limiting factor is the speed of external resources rather than CPU computation. Concurrency can improve throughput by overlapping waiting periods."
+    },
+    {
+      "id": "concurrency-cpu-bound-definition",
+      "question": "What makes a program CPU-bound?",
+      "answer": "A CPU-bound program spends most of its execution time performing computations.",
+      "explanation": "Its performance is primarily limited by CPU processing capacity rather than waiting for external resources. Recursive Fibonacci calculations are an example."
+    },
+    {
+      "id": "concurrency-io-vs-cpu-optimization",
+      "question": "How do optimization strategies differ between I/O-bound and CPU-bound workloads?",
+      "answer": "I/O-bound workloads benefit from overlapping waiting periods, while CPU-bound workloads benefit from performing more computations in parallel.",
+      "explanation": "Threading and asyncio are useful for concurrent I/O. Multiprocessing can distribute CPU-intensive calculations across multiple cores."
+    },
+    {
+      "id": "concurrency-preemptive-multitasking",
+      "question": "What is preemptive multitasking?",
+      "answer": "Preemptive multitasking allows the operating system to interrupt a running thread or process and schedule another one.",
+      "explanation": "The running code does not need to explicitly yield control. A context switch can occur during an operation that appears to be a single Python statement."
+    },
+    {
+      "id": "concurrency-cooperative-multitasking",
+      "question": "What is cooperative multitasking in asynchronous programming?",
+      "answer": "Cooperative multitasking requires tasks to voluntarily yield control so that other tasks can execute.",
+      "explanation": "Python asyncio uses this approach. Tasks yield at appropriate suspension points, making execution flow more predictable than arbitrary preemptive switching."
+    },
+    {
+      "id": "concurrency-preemptive-vs-cooperative",
+      "question": "How does task switching differ between Python threading and asyncio?",
+      "answer": "Thread switching is controlled by the operating system, while asyncio tasks cooperate by yielding control at suspension points.",
+      "explanation": "Preemptive switching can occur unexpectedly. Cooperative switching makes suspension points more explicit but depends on tasks yielding control."
+    },
+    {
+      "id": "concurrency-context-switching-risk",
+      "question": "Why can a simple Python statement such as x = x + 1 be problematic when multiple threads access shared data?",
+      "answer": "The statement can involve several bytecode instructions, allowing a thread switch before the complete operation finishes.",
+      "explanation": "Two threads may read or modify shared data in an unexpected order, potentially causing a race condition."
+    },
+    {
+      "id": "concurrency-race-condition",
+      "question": "What is a race condition in concurrent programming?",
+      "answer": "A race condition occurs when a program's result depends on the unpredictable timing or ordering of concurrent operations.",
+      "explanation": "Threads accessing shared mutable data without proper synchronization may interfere with one another. Such problems can produce intermittent bugs that are difficult to reproduce."
+    },
+    {
+      "id": "concurrency-thread-safe-structures",
+      "question": "How can thread-safe data structures help prevent concurrency problems?",
+      "answer": "They coordinate access to shared data using synchronization mechanisms such as locks.",
+      "explanation": "For example, queue.Queue provides synchronized communication between threads, reducing the need to manually protect every queue operation."
+    },
+    {
+      "id": "concurrency-thread-pool-purpose",
+      "question": "What is the purpose of a thread pool?",
+      "answer": "A thread pool maintains reusable worker threads for executing multiple tasks.",
+      "explanation": "Reusing threads avoids repeatedly creating and destroying them. A pool also controls how many worker threads are available."
+    },
+    {
+      "id": "concurrency-thread-pool-executor",
+      "question": "How does ThreadPoolExecutor simplify concurrent execution in Python?",
+      "answer": "ThreadPoolExecutor manages a pool of threads and distributes submitted tasks among its workers.",
+      "explanation": "The map() method can apply a function to multiple inputs using worker threads. A context manager handles executor shutdown.",
+      "code": [
+        "from concurrent.futures import ThreadPoolExecutor",
+        "",
+        "with ThreadPoolExecutor(max_workers=5) as executor:",
+        "    results = list(executor.map(download_site, sites))"
+      ]
+    },
+    {
+      "id": "concurrency-thread-pool-sizing",
+      "question": "How should the number of threads in an I/O-bound thread pool be chosen?",
+      "answer": "Choose the number experimentally based on workload characteristics rather than assuming it must equal the CPU core count.",
+      "explanation": "I/O-bound threads often spend time waiting, so more threads than CPU cores may be useful. Excessive threads eventually introduce scheduling overhead and diminishing returns."
+    },
+    {
+      "id": "concurrency-thread-local-storage",
+      "question": "What is thread-local storage in Python, and when is it useful?",
+      "answer": "Thread-local storage gives each thread its own values for attributes accessed through a shared threading.local() object.",
+      "explanation": "It is useful for maintaining one reusable HTTP session per thread without sharing the same session object between different threads.",
+      "code": [
+        "import threading",
+        "import requests",
+        "",
+        "thread_local = threading.local()",
+        "",
+        "def get_session():",
+        "    if not hasattr(thread_local, 'session'):",
+        "        thread_local.session = requests.Session()",
+        "    return thread_local.session"
+      ]
+    },
+    {
+      "id": "concurrency-requests-session-sharing",
+      "question": "Why does the threaded HTTP downloading example create a separate requests.Session for each thread?",
+      "answer": "To avoid interference caused by sharing one session across multiple threads.",
+      "explanation": "The example treats requests.Session as not thread-safe. Thread-local storage allows each worker thread to create a session once and reuse it for subsequent requests."
+    },
+    {
+      "id": "concurrency-event-loop",
+      "question": "What is the role of the event loop in Python asyncio?",
+      "answer": "The event loop schedules asynchronous tasks, suspends tasks waiting for operations, and resumes them when they can make progress.",
+      "explanation": "For example, while one coroutine waits for an HTTP response, the event loop can execute another ready coroutine."
+    },
+    {
+      "id": "concurrency-coroutine-definition",
+      "question": "What is a coroutine in Python, and how is one created?",
+      "answer": "A coroutine is an asynchronous computation that can suspend and resume execution. Calling a function defined with async def creates a coroutine object.",
+      "explanation": "Calling an async function does not automatically execute its body to completion. The coroutine must be awaited or scheduled for execution.",
+      "code": [
+        "async def fetch_data():",
+        "    return 'result'",
+        "",
+        "coroutine = fetch_data()"
+      ]
+    },
+    {
+      "id": "concurrency-await-keyword",
+      "question": "What does the await keyword do inside a Python coroutine?",
+      "answer": "It suspends the current coroutine until the awaited operation completes and produces its result.",
+      "explanation": "When the awaited operation yields control, the event loop can execute other ready tasks. This enables concurrency without blocking the entire event loop.",
+      "code": [
+        "import asyncio",
+        "",
+        "async def main():",
+        "    await asyncio.sleep(3.5)"
+      ]
+    },
+    {
+      "id": "concurrency-asyncio-gather",
+      "question": "How does asyncio.gather() help execute multiple asynchronous operations concurrently?",
+      "answer": "asyncio.gather() schedules multiple awaitables to run concurrently and waits for their results.",
+      "explanation": "Awaiting each download separately in a loop would make them execute sequentially. Gathering them allows their I/O waiting periods to overlap.",
+      "code": [
+        "tasks = [download_site(url, session) for url in sites]",
+        "results = await asyncio.gather(*tasks)"
+      ]
+    },
+    {
+      "id": "concurrency-asyncio-blocking-calls",
+      "question": "Why should blocking operations be avoided inside asyncio coroutines?",
+      "answer": "Blocking operations can prevent the event loop from executing other tasks while the operation runs.",
+      "explanation": "A synchronous network request may block its thread while waiting for a response. An asynchronous operation can yield control so other coroutines continue making progress."
+    },
+    {
+      "id": "concurrency-aiohttp-vs-requests",
+      "question": "Why is aiohttp used instead of requests in the asynchronous HTTP downloading example?",
+      "answer": "aiohttp supports asynchronous network operations that can cooperate with the asyncio event loop.",
+      "explanation": "The requests library uses blocking synchronous calls. Calling it directly within a coroutine can prevent other asyncio tasks from running during the request."
+    },
+    {
+      "id": "concurrency-asyncio-session-sharing",
+      "question": "Why can multiple asyncio download tasks share one aiohttp.ClientSession?",
+      "answer": "The tasks execute within the same event loop and can share a session designed for asynchronous use.",
+      "explanation": "Cooperative scheduling means tasks switch at suspension points rather than through arbitrary thread preemption. Sharing one asynchronous session also avoids creating a separate session for every request."
+    },
+    {
+      "id": "concurrency-coroutine-vs-thread-overhead",
+      "question": "Why can asyncio support many concurrent I/O tasks with less overhead than creating a thread for each task?",
+      "answer": "Coroutines are generally lighter to create, suspend, and resume than operating-system threads.",
+      "explanation": "The event loop can manage many tasks using a single thread, avoiding much of the scheduling and memory overhead associated with large numbers of threads."
+    },
+    {
+      "id": "concurrency-uncooperative-coroutine",
+      "question": "What happens when an asyncio coroutine performs a long computation without yielding control?",
+      "answer": "It can monopolize the event-loop thread and prevent other asynchronous tasks from making progress.",
+      "explanation": "Cooperative multitasking depends on tasks yielding control. The event loop cannot automatically preempt a coroutine that continues executing synchronous CPU-intensive code."
+    },
+    {
+      "id": "concurrency-multiprocessing-definition",
+      "question": "How does multiprocessing achieve parallel execution in Python?",
+      "answer": "Multiprocessing runs work in separate processes, each with its own Python interpreter, allowing execution across multiple CPU cores.",
+      "explanation": "Unlike ordinary single-process threading in the GIL-constrained CPython model described, separate interpreter processes can perform CPU-intensive Python calculations simultaneously."
+    },
+    {
+      "id": "concurrency-process-memory-isolation",
+      "question": "How does memory sharing differ between threads and processes?",
+      "answer": "Threads within one process share its memory space, while separate processes have independent memory spaces.",
+      "explanation": "Threads must carefully synchronize access to shared data. Processes require explicit communication or sharing mechanisms to exchange information."
+    },
+    {
+      "id": "concurrency-gil-purpose",
+      "question": "What is the Global Interpreter Lock (GIL), and why is it relevant to CPU-bound Python threading?",
+      "answer": "The GIL is an interpreter lock that limits simultaneous execution of Python bytecode by threads in the traditional CPython execution model.",
+      "explanation": "In the GIL-constrained model described, adding threads does not allow CPU-bound Python bytecode to execute in parallel across cores. Multiprocessing uses separate interpreters to avoid this limitation."
+    },
+    {
+      "id": "concurrency-process-pool-executor",
+      "question": "What is ProcessPoolExecutor used for?",
+      "answer": "ProcessPoolExecutor distributes function calls across a pool of worker processes.",
+      "explanation": "Each worker runs in a separate process. This can accelerate independent CPU-intensive operations by using multiple CPU cores.",
+      "code": [
+        "from concurrent.futures import ProcessPoolExecutor",
+        "",
+        "with ProcessPoolExecutor() as executor:",
+        "    results = list(executor.map(fib, [35] * 20))"
+      ]
+    },
+    {
+      "id": "concurrency-process-pool-initializer",
+      "question": "What is the purpose of the initializer parameter in ProcessPoolExecutor?",
+      "answer": "It specifies a function that runs when each worker process starts, allowing process-specific resources to be initialized.",
+      "explanation": "For example, each process can create its own requests.Session and store it in a process-local global variable rather than creating a new session for every request.",
+      "code": [
+        "def init_process():",
+        "    global session",
+        "    session = requests.Session()",
+        "",
+        "with ProcessPoolExecutor(initializer=init_process) as executor:",
+        "    executor.map(download_site, sites)"
+      ]
+    },
+    {
+      "id": "concurrency-multiprocessing-overhead",
+      "question": "What overhead does multiprocessing introduce compared with threading?",
+      "answer": "Multiprocessing requires creating separate processes and may require inter-process communication and data serialization.",
+      "explanation": "Starting separate Python interpreters is more expensive than starting threads. Transferring data between processes can add further overhead, including serialization costs."
+    },
+    {
+      "id": "concurrency-process-communication",
+      "question": "Why is transferring data between Python processes more complicated than sharing data between threads?",
+      "answer": "Processes have separate memory spaces, so data must be exchanged through inter-process communication mechanisms.",
+      "explanation": "Process pools commonly serialize transferred objects using pickle. Serialization introduces overhead, and not every Python object can be serialized."
+    },
+    {
+      "id": "concurrency-multiprocessing-io-bound",
+      "question": "Why is multiprocessing often less suitable than threading or asyncio for I/O-bound workloads?",
+      "answer": "Its additional process startup and communication overhead may outweigh the benefits when tasks spend most of their time waiting for I/O.",
+      "explanation": "Threading and asyncio can overlap waiting periods without creating separate Python interpreters. The best choice still depends on the workload."
+    },
+    {
+      "id": "concurrency-fibonacci-cpu-bound",
+      "question": "Why is a naive recursive Fibonacci implementation useful for demonstrating CPU-bound workloads?",
+      "answer": "It performs many repeated recursive calculations, creating substantial CPU work.",
+      "explanation": "The recursive function repeatedly computes the same intermediate Fibonacci numbers. This provides a computation-heavy workload for comparing concurrency approaches.",
+      "code": [
+        "def fib(n):",
+        "    return n if n < 2 else fib(n - 2) + fib(n - 1)"
+      ]
+    },
+    {
+      "id": "concurrency-threading-cpu-bound-limitations",
+      "question": "Why does using ThreadPoolExecutor not necessarily accelerate CPU-bound Python code?",
+      "answer": "In traditional GIL-constrained CPython, threads cannot execute Python bytecode in parallel across multiple CPU cores.",
+      "explanation": "CPU-intensive threads compete for execution time instead of overlapping I/O waits. Thread creation and scheduling introduce additional overhead."
+    },
+    {
+      "id": "concurrency-asyncio-cpu-bound-limitations",
+      "question": "Why is asyncio not generally effective for accelerating CPU-intensive calculations?",
+      "answer": "Ordinary asyncio tasks execute on the event-loop thread rather than distributing CPU computation across multiple cores.",
+      "explanation": "Asyncio is designed to overlap waiting periods. CPU-heavy coroutines still require the CPU to perform all their computations and can prevent other tasks from running if they do not yield."
+    },
+    {
+      "id": "concurrency-multiprocessing-cpu-bound-benefits",
+      "question": "Why can multiprocessing accelerate independent CPU-bound Fibonacci calculations?",
+      "answer": "Separate worker processes can execute calculations simultaneously on different CPU cores.",
+      "explanation": "Each process has its own interpreter and memory space, allowing computations to proceed in parallel. Performance gains depend on available cores, workload size, and process overhead."
+    }
+  ]
+}
