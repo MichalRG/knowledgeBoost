@@ -20,6 +20,7 @@ fun TopicRoute(
     val summary by viewModel.summary.collectAsStateWithLifecycle()
     val positions by viewModel.positions.collectAsStateWithLifecycle()
     val revealed by viewModel.revealed.collectAsStateWithLifecycle()
+    val library by viewModel.library.collectAsStateWithLifecycle()
     val entered = rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -27,9 +28,14 @@ fun TopicRoute(
         entered.value = true
     }
 
+    val topic = library.topic(topicId)
+    if (topic == null) {
+        MissingTopicScreen()
+        return
+    }
     val currentQueue = queue ?: return
     TopicScreen(
-        title = viewModel.title,
+        title = topic.title,
         queue = currentQueue,
         position = currentQueue.positionOf((positions ?: return).of(topicId)),
         nextReturn = (summary ?: return).nextReturn,

@@ -32,6 +32,10 @@ sealed interface Destination {
         override val route = "removed"
     }
 
+    data object TopicFolder : Destination {
+        override val route = "topic_folder"
+    }
+
     companion object {
         val stackSaver: Saver<SnapshotStateList<Destination>, Any> = listSaver(
             save = { stack -> stack.map { it.route } },
@@ -44,6 +48,7 @@ sealed interface Destination {
                         "missed" -> Missed
                         "missed_card" -> MissedCard(argument)
                         "removed" -> Removed
+                        "topic_folder" -> TopicFolder
                         else -> Home
                     }
                 }.toMutableStateList()

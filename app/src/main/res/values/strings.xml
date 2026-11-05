@@ -10,6 +10,7 @@
     <string name="category_missed">On the Missed list: %1$d</string>
 
     <string name="topic_empty">No questions here right now</string>
+    <string name="topic_missing">This topic is no longer in the library. Go back or reconnect its topic folder. Your progress is saved.</string>
     <string name="topic_next_return">The next question comes back on %1$s</string>
 
     <string name="card_position">%1$d / %2$d</string>
@@ -38,4 +39,24 @@
     <string name="removed_intro">Removed questions are hidden everywhere until you restore them.</string>
     <string name="removed_empty">No removed questions</string>
     <string name="removed_restore">Restore</string>
+
+    <string name="folder_title">Topic folder</string>
+    <string name="folder_intro">Choose a folder on your phone. Copy topic JSON files into it through USB or the Files app. The app reloads them when reopened. No rebuild or internet connection is needed.</string>
+    <string name="folder_selected">Selected folder: %1$s</string>
+    <string name="folder_none">None</string>
+    <string name="folder_bundled_count">Bundled: %1$s, %2$s</string>
+    <string name="folder_loaded_count">Loaded from folder: %1$s, %2$s</string>
+    <plurals name="folder_topic_count">
+        <item quantity="one">%1$d topic</item>
+        <item quantity="other">%1$d topics</item>
+    </plurals>
+    <plurals name="folder_question_count">
+        <item quantity="one">%1$d question</item>
+        <item quantity="other">%1$d questions</item>
+    </plurals>
+    <string name="folder_choose">Choose folder</string>
+    <string name="folder_reload">Reload topics</string>
+    <string name="folder_disconnect">Use bundled topics only</string>
+    <string name="folder_error">Topic folder error: %1$s\nCheck the folder and reload. The loaded-topic counts show what is currently available.</string>
+    <string name="folder_rules">Put each topic in a separate lowercase-slug.json file, directly in the selected folder. Categories come from the JSON. Subfolders and non-JSON files are ignored. Topic and question IDs must be unique, including bundled topics. Keep IDs unchanged to retain progress. If a reload fails, the current library stays unchanged. After an app restart, folder topics require a successful reload.</string>
 </resources>

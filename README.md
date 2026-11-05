@@ -30,9 +30,36 @@ All three topics are in **Programming**:
 The supplied question ids, text, explanations and code examples are unchanged.
 Saved progress for removed demonstration questions stays on the device but does not appear in the app.
 
-## Adding a topic
+## Adding topics without rebuilding
 
-Every topic is one JSON file in `app/src/main/assets/topics/`. The file name is the topic's id, for example `concurrency.json`. Add another file to include a new topic.
+Version 1.2 reads additional topics from a folder selected through Android's file picker.
+The three bundled topics remain available.
+
+1. Create a folder such as `Documents/KnowledgeBoost` on the phone.
+2. Copy one JSON file per topic into that folder through USB or the Files app.
+3. Open **Topic folder** in Knowledge Boost. Tap **Choose folder** and allow access to that folder.
+4. Tap **Reload topics**, or reopen the app, after adding or editing files.
+
+Categories come from each file's `category` field. The app reads JSON files directly in the selected folder, not in subfolders.
+Other file types are ignored.
+The app remembers the folder and retains read access across restarts without requesting access to all device storage.
+
+File names and question ids must be unique across the folder and the bundled topics.
+A folder file cannot replace a bundled topic.
+If any JSON file is invalid or has duplicate ids, the app shows an error and does not apply the folder changes.
+The current in-memory library remains available after a failed reload.
+After a cold start, folder topics require a successful reload. Bundled topics remain available if the folder is inaccessible.
+
+Deleting a folder file or choosing **Use bundled topics only** hides those questions without deleting their saved progress.
+Restoring the same topic and question ids restores their progress and resume positions.
+The two supplied folder topics, **Python Fundamentals** (29 questions) and **API** (64), bring the combined library to 182 questions.
+They are separate JSON files, not APK assets.
+
+## Topic JSON format
+
+Every topic is one JSON file. Save folder topics in the selected phone folder.
+Bundled topics live in `app/src/main/assets/topics/`.
+The file name is the topic's id, for example `concurrency.json`. Add another file to include a new topic.
 
 ```json
 {
@@ -62,7 +89,7 @@ Every topic is one JSON file in `app/src/main/assets/topics/`. The file name is 
 - Text can be corrected at any time, and questions can be added or reordered; progress stays.
 - Deleting a question hides it; its progress comes back if the same `id` is added again.
 
-Then:
+For bundled topics only:
 
 1. Run `./gradlew --offline :app:testDebugUnitTest`. The tests check every topic file; a file that breaks a rule is skipped by the app, so fix what the tests report.
 2. Bump `versionCode` in `app/build.gradle.kts`.
@@ -84,6 +111,5 @@ adb shell am broadcast -f 0x20 -n com.krzyzowski.knowledgeboost/.debug.DebugComm
 - A daily-question mode: one question a day from the topics you choose
 - Statistics per topic
 - Search across all questions
-- In-app topic import from a file
 
 Built with Kotlin and Jetpack Compose, Android 8.0+.

@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             KnowledgeBoostTheme {
-                KnowledgeBoostRoot(container.today)
+                KnowledgeBoostRoot(container.today, container.libraryStore)
             }
         }
     }

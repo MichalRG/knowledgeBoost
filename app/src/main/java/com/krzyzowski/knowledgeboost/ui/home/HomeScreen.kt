@@ -21,7 +21,7 @@ import com.krzyzowski.knowledgeboost.R
 import com.krzyzowski.knowledgeboost.ui.Destination
 
 @Composable
-fun HomeScreen(categories: List<String>, missed: Int, removed: Int, onOpen: (Destination) -> Unit) {
+fun HomeScreen(categories: List<String>, missed: Int, removed: Int, folderError: String?, onOpen: (Destination) -> Unit) {
     Scaffold { innerPadding ->
         Column(
             modifier = Modifier
@@ -51,6 +51,19 @@ fun HomeScreen(categories: List<String>, missed: Int, removed: Int, onOpen: (Des
                 modifier = Modifier.fillMaxWidth().testTag("open_removed"),
             ) {
                 Text(stringResource(R.string.home_removed, removed))
+            }
+            OutlinedButton(
+                onClick = { onOpen(Destination.TopicFolder) },
+                modifier = Modifier.fillMaxWidth().testTag("open_topic_folder"),
+            ) {
+                Text(stringResource(R.string.folder_title))
+            }
+            if (folderError != null) {
+                Text(
+                    stringResource(R.string.folder_error, folderError),
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.testTag("home_folder_error"),
+                )
             }
         }
     }

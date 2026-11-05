@@ -13,10 +13,8 @@ import kotlinx.coroutines.flow.stateIn
 
 class CategoryViewModel(application: Application, name: String) : AndroidViewModel(application) {
     private val container = (application as KnowledgeBoostApp).container
-    private val topics = container.library.topicsIn(name)
-
     val summaries: StateFlow<List<Pair<Topic, TopicSummary>>?> =
-        combine(container.progressStore.progress, container.today.date) { progress, day ->
-            topics.map { it to TopicSummary.of(it, progress, day) }
+        combine(container.library, container.progressStore.progress, container.today.date) { library, progress, day ->
+            library.topicsIn(name).map { it to TopicSummary.of(it, progress, day) }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 }

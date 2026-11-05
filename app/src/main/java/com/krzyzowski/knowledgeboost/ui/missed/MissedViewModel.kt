@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -19,9 +19,10 @@ class MissedViewModel(application: Application) : AndroidViewModel(application) 
     private val _selected = MutableStateFlow<String?>(null)
     private val _revealed = MutableStateFlow(false)
 
-    val queue: StateFlow<CardQueue?> = container.progressStore.progress
-        .map { CardQueue.missed(container.library, it) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+    val queue: StateFlow<CardQueue?> =
+        combine(container.library, container.progressStore.progress) { library, progress ->
+            CardQueue.missed(library, progress)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     val today: StateFlow<LocalDate> = container.today.date
 

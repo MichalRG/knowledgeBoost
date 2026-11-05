@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.krzyzowski.knowledgeboost.KnowledgeBoostApp
-import com.krzyzowski.knowledgeboost.content.Topic
 import com.krzyzowski.knowledgeboost.session.CardQueue
 import com.krzyzowski.knowledgeboost.session.ResumePositions
 import com.krzyzowski.knowledgeboost.session.TopicSummary
@@ -18,21 +17,20 @@ import kotlinx.coroutines.launch
 
 class TopicViewModel(application: Application, private val topicId: String) : AndroidViewModel(application) {
     private val container = (application as KnowledgeBoostApp).container
-    private val topic = container.library.topic(topicId) ?: Topic(topicId, category = "", title = "", questions = emptyList())
     private val _revealed = MutableStateFlow(false)
 
-    val title: String = topic.title
+    val library = container.library
 
     val revealed: StateFlow<Boolean> = _revealed.asStateFlow()
 
     val queue: StateFlow<CardQueue?> =
-        combine(container.progressStore.progress, container.today.date) { progress, day ->
-            CardQueue.available(topic, container.library, progress, day)
+        combine(container.library, container.progressStore.progress, container.today.date) { library, progress, day ->
+            library.topic(topicId)?.let { CardQueue.available(it, library, progress, day) }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     val summary: StateFlow<TopicSummary?> =
-        combine(container.progressStore.progress, container.today.date) { progress, day ->
-            TopicSummary.of(topic, progress, day)
+        combine(container.library, container.progressStore.progress, container.today.date) { library, progress, day ->
+            library.topic(topicId)?.let { TopicSummary.of(it, progress, day) }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     val positions: StateFlow<ResumePositions?> = container.resumeStore.positions
