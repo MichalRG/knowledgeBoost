@@ -52,7 +52,9 @@ class TopicLibraryStore(
     }
 
     private fun publish(uri: String?, library: Library) {
-        if (currentLibrary.value.topics != library.topics) currentLibrary.value = library
+        if (currentLibrary.value.topics != library.topics || currentLibrary.value.quotes != library.quotes) {
+            currentLibrary.value = library
+        }
         currentState.value = currentState.value.copy(
             uri = uri,
             topics = library.topics.size - bundled.topics.size,

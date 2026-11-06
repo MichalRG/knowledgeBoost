@@ -1,6 +1,6 @@
 package com.krzyzowski.knowledgeboost.content
 
-class Library(topics: List<Topic>) {
+class Library(topics: List<Topic>, val quotes: List<DailyQuote> = emptyList()) {
     val topics: List<Topic> = topics.sortedWith(
         compareBy(String.CASE_INSENSITIVE_ORDER, Topic::category)
             .thenBy(String.CASE_INSENSITIVE_ORDER, Topic::title)

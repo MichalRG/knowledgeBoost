@@ -22,6 +22,7 @@ import com.krzyzowski.knowledgeboost.ui.missed.MissedRoute
 import com.krzyzowski.knowledgeboost.ui.removed.RemovedRoute
 import com.krzyzowski.knowledgeboost.ui.topic.TopicRoute
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun KnowledgeBoostRoot(today: Today, libraryStore: TopicLibraryStore) {
@@ -31,7 +32,7 @@ fun KnowledgeBoostRoot(today: Today, libraryStore: TopicLibraryStore) {
 
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            libraryStore.reload()
+            launch { libraryStore.reload() }
             while (true) {
                 today.refresh()
                 delay(15_000)

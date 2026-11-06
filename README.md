@@ -2,6 +2,44 @@
 
 A small Android app that helps you remember what you are learning, one question at a time.
 
+## Today's thought
+
+Version 1.3 adds a daily thought card to Home with the quote, author, source and optional Polish translation.
+The bundled list contains the 31 supplied quotes in their original order.
+The authors, sources and translations come from the supplied list.
+
+The first quote appears on the first day you open this feature.
+The app remembers that start date across restarts and updates.
+Each local calendar day advances the list, including days when the app is closed.
+After the last quote, the list repeats from the first quote.
+The displayed thought updates while the app is open and when you return to it.
+There are no reminders or background tasks.
+
+To replace the list without rebuilding, put `daily-quotes.json` in the selected topic folder:
+
+```json
+{
+  "quotes": [
+    {
+      "text": "Write one thought here.",
+      "author": "Author name",
+      "source": "Book, speech or other source",
+      "polish": "Optional Polish translation"
+    }
+  ]
+}
+```
+
+`quotes` must be a non-empty array. Each entry requires non-blank `text`, `author` and `source` strings.
+`polish` is optional, but must be a non-blank string when supplied.
+File order determines the cycle. Changing the list keeps the original start date and uses the new list length.
+Tap **Reload topics**, or reopen the app, after editing.
+This reserved file replaces daily thoughts only. It does not create a question topic or change study progress.
+If the file is absent, the app uses the bundled quotes.
+A malformed file rejects the entire folder reload and keeps both current topics and thoughts unchanged.
+
+## Knowledge challenges
+
 Pick a category, then a topic, and go through its questions in file order. Answer from memory, then tap **Show answer** to check the short answer, the explanation and, for some questions, a code example. **Previous** and **Next** move between questions without grading anything. The app remembers where you stopped in each topic.
 
 After **Show answer**, grade yourself:

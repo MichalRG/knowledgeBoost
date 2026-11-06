@@ -4,6 +4,9 @@
 
     <string name="home_missed">Missed (%1$d)</string>
     <string name="home_removed">Removed (%1$d)</string>
+    <string name="quote_title">Today\'s thought</string>
+    <string name="quote_polish">PL: %1$s</string>
+    <string name="quote_source">Source: %1$s</string>
 
     <string name="category_available">Available now: %1$d</string>
     <string name="category_hidden">Hidden as known: %1$d</string>
@@ -58,5 +61,5 @@
     <string name="folder_reload">Reload topics</string>
     <string name="folder_disconnect">Use bundled topics only</string>
     <string name="folder_error">Topic folder error: %1$s\nCheck the folder and reload. The loaded-topic counts show what is currently available.</string>
-    <string name="folder_rules">Put each topic in a separate lowercase-slug.json file, directly in the selected folder. Categories come from the JSON. Subfolders and non-JSON files are ignored. Topic and question IDs must be unique, including bundled topics. Keep IDs unchanged to retain progress. If a reload fails, the current library stays unchanged. After an app restart, folder topics require a successful reload.</string>
+    <string name="folder_rules">Put each topic in a separate lowercase-slug.json file, directly in the selected folder. Categories come from the JSON. The optional daily-quotes.json file replaces the daily thoughts list. Subfolders and non-JSON files are ignored. Topic and question IDs must be unique, including bundled topics. Keep IDs unchanged to retain progress. If a reload fails, topics and daily thoughts stay unchanged. After an app restart, folder content requires a successful reload.</string>
 </resources>

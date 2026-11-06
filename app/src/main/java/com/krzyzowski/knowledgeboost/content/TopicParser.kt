@@ -46,12 +46,6 @@ class TopicParser {
         )
     }
 
-    private fun JSONObject.requiredString(where: String, key: String): String {
-        val value = opt(key)
-        require(value is String && value.isNotBlank()) { "$where: $key must be a non-blank string" }
-        return value
-    }
-
     private companion object {
         val SLUG = Regex("[a-z0-9]+(-[a-z0-9]+)*")
     }

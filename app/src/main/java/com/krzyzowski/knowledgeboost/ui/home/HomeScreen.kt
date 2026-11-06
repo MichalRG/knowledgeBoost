@@ -18,10 +18,19 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.krzyzowski.knowledgeboost.R
+import com.krzyzowski.knowledgeboost.content.DailyQuote
 import com.krzyzowski.knowledgeboost.ui.Destination
+import com.krzyzowski.knowledgeboost.ui.quote.DailyQuoteCard
 
 @Composable
-fun HomeScreen(categories: List<String>, missed: Int, removed: Int, folderError: String?, onOpen: (Destination) -> Unit) {
+fun HomeScreen(
+    categories: List<String>,
+    missed: Int,
+    removed: Int,
+    folderError: String?,
+    quote: DailyQuote?,
+    onOpen: (Destination) -> Unit,
+) {
     Scaffold { innerPadding ->
         Column(
             modifier = Modifier
@@ -32,6 +41,7 @@ fun HomeScreen(categories: List<String>, missed: Int, removed: Int, folderError:
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium)
+            if (quote != null) DailyQuoteCard(quote)
             categories.forEach { category ->
                 FilledTonalButton(
                     onClick = { onOpen(Destination.Category(category)) },
