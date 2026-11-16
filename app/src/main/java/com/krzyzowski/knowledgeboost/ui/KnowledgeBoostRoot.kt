@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.krzyzowski.knowledgeboost.content.TopicLibraryStore
+import com.krzyzowski.knowledgeboost.quote.DailyQuoteRecorder
 import com.krzyzowski.knowledgeboost.time.Today
 import com.krzyzowski.knowledgeboost.ui.category.CategoryRoute
 import com.krzyzowski.knowledgeboost.ui.home.HomeRoute
@@ -20,12 +21,13 @@ import com.krzyzowski.knowledgeboost.ui.folder.TopicFolderRoute
 import com.krzyzowski.knowledgeboost.ui.missed.MissedCardRoute
 import com.krzyzowski.knowledgeboost.ui.missed.MissedRoute
 import com.krzyzowski.knowledgeboost.ui.removed.RemovedRoute
+import com.krzyzowski.knowledgeboost.ui.quote.QuoteCalendarRoute
 import com.krzyzowski.knowledgeboost.ui.topic.TopicRoute
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun KnowledgeBoostRoot(today: Today, libraryStore: TopicLibraryStore) {
+fun KnowledgeBoostRoot(today: Today, libraryStore: TopicLibraryStore, quoteHistory: DailyQuoteRecorder) {
     val stack = rememberSaveable(saver = Destination.stackSaver) { mutableStateListOf<Destination>(Destination.Home) }
     val open: (Destination) -> Unit = { stack.add(it) }
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -33,6 +35,7 @@ fun KnowledgeBoostRoot(today: Today, libraryStore: TopicLibraryStore) {
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { libraryStore.reload() }
+            launch { quoteHistory.run() }
             while (true) {
                 today.refresh()
                 delay(15_000)
@@ -51,6 +54,7 @@ fun KnowledgeBoostRoot(today: Today, libraryStore: TopicLibraryStore) {
             is Destination.MissedCard -> MissedCardRoute(destination.startId)
             Destination.Removed -> RemovedRoute()
             Destination.TopicFolder -> TopicFolderRoute()
+            Destination.QuoteCalendar -> QuoteCalendarRoute(quoteHistory.state, today.date)
         }
     }
 }

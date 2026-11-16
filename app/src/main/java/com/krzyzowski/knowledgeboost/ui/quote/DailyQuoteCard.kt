@@ -16,11 +16,11 @@ import com.krzyzowski.knowledgeboost.R
 import com.krzyzowski.knowledgeboost.content.DailyQuote
 
 @Composable
-fun DailyQuoteCard(quote: DailyQuote) {
+fun DailyQuoteCard(quote: DailyQuote, title: String = stringResource(R.string.quote_title)) {
     Card(modifier = Modifier.fillMaxWidth().testTag("daily_quote")) {
         Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
-                stringResource(R.string.quote_title),
+                title,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary,
             )

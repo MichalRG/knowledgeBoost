@@ -6,4 +6,5 @@ data class TopicFolderState(
     val questions: Int = 0,
     val loading: Boolean = false,
     val error: String? = null,
+    val initialized: Boolean = false,
 )

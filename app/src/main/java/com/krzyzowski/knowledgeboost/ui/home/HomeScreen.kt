@@ -29,6 +29,7 @@ fun HomeScreen(
     removed: Int,
     folderError: String?,
     quote: DailyQuote?,
+    quoteError: String?,
     onOpen: (Destination) -> Unit,
 ) {
     Scaffold { innerPadding ->
@@ -42,6 +43,19 @@ fun HomeScreen(
         ) {
             Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium)
             if (quote != null) DailyQuoteCard(quote)
+            OutlinedButton(
+                onClick = { onOpen(Destination.QuoteCalendar) },
+                modifier = Modifier.fillMaxWidth().testTag("open_quote_calendar"),
+            ) {
+                Text(stringResource(R.string.quote_calendar_title))
+            }
+            if (quoteError != null) {
+                Text(
+                    stringResource(R.string.quote_history_error, quoteError),
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.testTag("quote_history_error"),
+                )
+            }
             categories.forEach { category ->
                 FilledTonalButton(
                     onClick = { onOpen(Destination.Category(category)) },

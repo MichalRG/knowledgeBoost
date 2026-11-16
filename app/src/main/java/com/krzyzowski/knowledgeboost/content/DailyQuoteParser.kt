@@ -14,19 +14,7 @@ class DailyQuoteParser {
         val quotes = json.opt("quotes")
         require(quotes is JSONArray && quotes.length() > 0) { "$FILE_NAME: quotes must be a non-empty array" }
         return List(quotes.length()) { index ->
-            val where = "$FILE_NAME quote ${index + 1}"
-            val item = quotes.opt(index)
-            require(item is JSONObject) { "$where: must be an object" }
-            val polish = item.opt("polish")
-            require(polish == null || (polish is String && polish.isNotBlank())) {
-                "$where: polish must be a non-blank string when supplied"
-            }
-            DailyQuote(
-                text = item.requiredString(where, "text"),
-                author = item.requiredString(where, "author"),
-                source = item.requiredString(where, "source"),
-                polish = polish,
-            )
+            DailyQuoteJson.decode(quotes.opt(index), "$FILE_NAME quote ${index + 1}")
         }
     }
 

@@ -13,12 +13,14 @@ fun HomeRoute(onOpen: (Destination) -> Unit, viewModel: HomeViewModel = viewMode
     val categories by viewModel.categories.collectAsStateWithLifecycle()
     val folder by viewModel.folder.collectAsStateWithLifecycle()
     val quote by viewModel.quote.collectAsStateWithLifecycle()
+    val quoteError by viewModel.quoteError.collectAsStateWithLifecycle()
     HomeScreen(
         categories = categories,
         missed = missed ?: return,
         removed = removed ?: return,
         folderError = folder.error,
         quote = quote,
+        quoteError = quoteError,
         onOpen = onOpen,
     )
 }

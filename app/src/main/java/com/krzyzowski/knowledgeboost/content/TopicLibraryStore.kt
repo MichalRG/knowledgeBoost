@@ -73,7 +73,7 @@ class TopicLibraryStore(
         } catch (error: IllegalArgumentException) {
             currentState.value = currentState.value.copy(error = error.message ?: error.javaClass.simpleName)
         } finally {
-            currentState.value = currentState.value.copy(loading = false)
+            currentState.value = currentState.value.copy(loading = false, initialized = true)
         }
     }
 }

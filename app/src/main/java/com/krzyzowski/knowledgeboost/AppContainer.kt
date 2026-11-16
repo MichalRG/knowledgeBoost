@@ -9,10 +9,12 @@ import com.krzyzowski.knowledgeboost.content.DocumentTopicFolder
 import com.krzyzowski.knowledgeboost.content.Library
 import com.krzyzowski.knowledgeboost.content.TopicLibraryStore
 import com.krzyzowski.knowledgeboost.content.TopicParser
-import com.krzyzowski.knowledgeboost.data.ProgressStore
+import com.krzyzowski.knowledgeboost.data.DailyQuoteHistoryStore
 import com.krzyzowski.knowledgeboost.data.DailyQuoteStore
+import com.krzyzowski.knowledgeboost.data.ProgressStore
 import com.krzyzowski.knowledgeboost.data.ResumeStore
 import com.krzyzowski.knowledgeboost.data.TopicFolderStore
+import com.krzyzowski.knowledgeboost.quote.DailyQuoteRecorder
 import com.krzyzowski.knowledgeboost.time.Today
 import com.krzyzowski.knowledgeboost.time.VariantClock
 
@@ -37,4 +39,10 @@ class AppContainer(context: Context) {
     val progressStore = ProgressStore(dataStore, clock)
     val resumeStore = ResumeStore(dataStore)
     val dailyQuoteStore = DailyQuoteStore(dataStore)
+    private val quoteHistoryStore = DailyQuoteHistoryStore(
+        PreferenceDataStoreFactory.create(
+            produceFile = { context.preferencesDataStoreFile("daily_quote_history") },
+        ),
+    )
+    val quoteHistory = DailyQuoteRecorder(quoteHistoryStore, dailyQuoteStore, libraryStore, today)
 }

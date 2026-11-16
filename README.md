@@ -34,9 +34,27 @@ To replace the list without rebuilding, put `daily-quotes.json` in the selected 
 `polish` is optional, but must be a non-blank string when supplied.
 File order determines the cycle. Changing the list keeps the original start date and uses the new list length.
 Tap **Reload topics**, or reopen the app, after editing.
+Saved thoughts, including today's thought, never change. A successfully loaded replacement list applies from the following day.
 This reserved file replaces daily thoughts only. It does not create a question topic or change study progress.
 If the file is absent, the app uses the bundled quotes.
 A malformed file rejects the entire folder reload and keeps both current topics and thoughts unchanged.
+
+### Quote calendar
+
+Version 1.4 adds **Quote calendar** below today's thought. Open it and tap **Choose date** to select a day
+from the first-use date through today. The calendar shows that day's English quote, Polish translation,
+author and source. **Today** returns to the current day. Earlier and future dates cannot be selected.
+
+On the first launch after this update, earlier dates are reconstructed using the current quote list and
+the original cycle start date. These reconstructions match the old display if the list has not changed;
+previous versions of edited quote files cannot be recovered.
+Each day's complete quote is then saved locally, so later edits, reordering, folder disconnection and
+app updates cannot rewrite the history. Days when the app is closed are filled using the last successfully
+loaded list, including the day you return. A newly loaded list takes effect the next day, using the original
+cycle start date rather than restarting at quote one.
+
+History is stored separately from question progress. Read or save failures show a quote-history error;
+reopen the app to retry. History stays on this phone, like study progress, and is not included in backups.
 
 ## Knowledge challenges
 
@@ -143,6 +161,8 @@ adb shell am broadcast -f 0x20 -n com.krzyzowski.knowledgeboost/.debug.DebugComm
 ```
 
 `10080` moves the app's clock 7 days ahead; `0` resets it. Release builds do not contain this receiver.
+Advancing the debug clock also saves quote history through that date. Use a disposable test installation
+for future-date checks so you do not create future history on your everyday installation.
 
 ## Future ideas
 
